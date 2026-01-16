@@ -94,14 +94,32 @@ async def shutdown_event():
 app.include_router(game.router, prefix=settings.API_V1_STR)
 app.include_router(leaderboard.router, prefix=settings.API_V1_STR)
 
+
 # Ruta raíz
-@app.get("/")
+@app.get("/", tags=["root"])
 async def root():
     return {
         "message": "🎮 Bienvenido a la API de Piedra, Papel o Tijera",
         "version": "1.0.0",
         "environment": settings.ENVIRONMENT,
-        "docs": "/docs" if not settings.is_production else "Deshabilitado en producción"
+        "api_prefix": settings.API_V1_STR,
+        "health_check": "/health",
+        "documentation": "/docs" if not settings.is_production else "Deshabilitado en producción"
+    }
+
+# Ruta de bienvenida de la API
+@app.get("/api", tags=["root"])
+@app.get("/api/", tags=["root"])
+async def api_root():
+    return {
+        "message": "🎮 API de Piedra, Papel o Tijera",
+        "version": "1.0.0",
+        "endpoints": {
+            "game": "/api/game/play",
+            "leaderboard_normal": "/api/leaderboard/normal",
+            "leaderboard_imposible": "/api/leaderboard/imposible",
+            "save_score": "/api/leaderboard"
+        }
     }
 
 # Health check
