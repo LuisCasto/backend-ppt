@@ -53,14 +53,17 @@ async def add_security_headers(request: Request, call_next):
     
     return response
 
-# Trusted Host Middleware - DESHABILITADO para evitar bloqueos
-# Configurar solo cuando tengas dominio personalizado
-# if settings.is_production:
-#     app.add_middleware(
-#         TrustedHostMiddleware,
-#         allowed_hosts=["backend-ppt-p0w6.onrender.com", "*.onrender.com"]
-#     )
-
+# Trusted Host Middleware (prevenir ataques de Host Header)
+if settings.is_production:
+    app.add_middleware(
+        TrustedHostMiddleware,
+        allowed_hosts=[
+            "backend-ppt-p0w6.onrender.com",
+            "*.onrender.com",
+            "localhost",
+            "127.0.0.1"
+        ]
+    )
 # Eventos de inicio y cierre
 @app.on_event("startup")
 async def startup_event():
